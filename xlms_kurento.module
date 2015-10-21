@@ -27,10 +27,12 @@ function xlms_kurento_block_view($delta = '') {
 }
 
 function xlms_kurento_player_block() {
+  global $base_url;
   $content = array();
   if (!is_null(arg(3))) {
-    $part = explode('/', request_uri());
-    $result_id = $part[4];
+    $query = drupal_get_query_parameters($_GET, array()); 
+    $part = explode('/', $query[q]); 
+    $result_id = $part[3];
     $session = new XlmsSession(NULL, $result_id);
     dpm($session);
   }
@@ -44,7 +46,7 @@ function xlms_kurento_player_block() {
   );
 
   $content = array();
-  $content['video']['#markup'] = '<video id="videoOutput" autoplay width="1024px" height="768px" style="max-width: 100%;" poster="/' . drupal_get_path('module', 'xlms_kurento') . '/img/webrtc.png"></video><br/><a id="start" href="#" class="btn btn-success">Play</a> <a id="stop" href="#" class="btn btn-danger">Stop</a>';
+  $content['video']['#markup'] = '<video id="videoOutput" autoplay width="1024px" height="768px" style="max-width: 100%;" poster="' . $base_url .'/'. drupal_get_path('module', 'xlms_kurento') . '/img/webrtc.png"></video><br/><a id="start" href="#" class="btn btn-success">Play</a> <a id="stop" href="#" class="btn btn-danger">Stop</a>';
 
   $content['#attached'] = array(
     'css' => array(

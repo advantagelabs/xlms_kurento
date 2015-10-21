@@ -1,0 +1,17 @@
+#block-xlms-kurento-xlms-kurento-player {
+    margin-bottom: 20px;
+}
+#block-xlms-kurento-xlms-kurento-player .btn {
+    background-color: #c60029;
+    border-radius: 5px;
+    box-shadow: 1px 1px 5px #ccc;
+    padding: 5px 10px;
+    color: #fff;
+    text-decoration: none;
+}
+#block-xlms-kurento-xlms-kurento-player #start {
+
+}
+#block-xlms-kurento-xlms-kurento-player #stop {
+
+}

@@ -1,0 +1,60 @@
+<?php
+/**
+ * Implements hook_block_info().
+ */
+function xlms_kurento_block_info() {
+  $blocks = array();
+
+  $blocks['xlms_kurento_player'] = array(
+    'info' => t('Kurento player'),
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function xlms_kurento_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'xlms_kurento_player':
+      $block['content'] = xlms_kurento_player_block();
+      break;
+  }
+  return $block;
+}
+
+function xlms_kurento_player_block() {
+  $content = array();
+  if (!is_null(arg(3))) {
+    $result_id = arg(3);
+    $session = new XlmsSession(NULL, $result_id);
+    dpm($session);
+  }
+  else {
+    return;
+  }
+
+  $settings = array(
+    'ws_uri' => 'ws://localhost:8888/kurento',
+    'file_uri' => 'file:///filelocation/' . $session->id . '.webm',
+  );
+
+  $content = array();
+  $content['video']['#markup'] = '<video id="videoOutput" autoplay width="1024px" height="768px" style="max-width: 100%;" poster="/' . drupal_get_path('module', 'xlms_kurento') . '/img/webrtc.png"></video><br/><a id="start" href="#" class="btn btn-success">Play</a> <a id="stop" href="#" class="btn btn-danger">Stop</a>';
+
+  $content['#attached'] = array(
+    'css' => array(
+      drupal_get_path('module', 'xlms_kurento') . '/css/xlms_kurento.css',
+    ),
+    'js' => array(
+      drupal_get_path('module', 'xlms_kurento') . '/js/xlms_kurento.js',
+      // drupal_get_path('module', 'xlms_kurento') . '/js/kurento-client.js',
+      array('data' => array('xlms_kurento' => $settings), 'type' => 'setting'),
+    ),
+  );
+  dpm($content);
+  return $content;
+}

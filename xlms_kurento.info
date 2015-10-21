@@ -1,0 +1,3 @@
+name = Kurento Media Server integration
+description = Basic integration to play WRTC streams from Kurento Media Server
+core = 7.x

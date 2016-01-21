@@ -23,17 +23,14 @@ function getopts(args, opts)
     return result;
 };
 
-var args = getopts(location.search,
-    {
-        default:
-        {
+var args = {
             // ws_uri: 'ws://' + location.hostname + ':8888/kurento',
-            ws_uri: Drupal.settings.xlms_kurento.ws_uri,
-            file_uri: Drupal.settings.xlms_kurento.file_uri,
+            ws_uri: null,
+            file_uri: null,
             // file_uri: 'file:///tmp/recorder_demo.webm', // file to be stored in media server
             ice_servers: undefined
         }
-    });
+    /*})*/;
 
 function setIceCandidateCallbacks(webRtcPeer, webRtcEp, onerror)
 {
@@ -56,13 +53,20 @@ function setIceCandidateCallbacks(webRtcPeer, webRtcEp, onerror)
 
 
 window.addEventListener('load', function(event) {
-    console = new Console()
+    //console = new Console()
 
+    /*
     var startRecordButton = document.getElementById('start');
     startRecordButton.addEventListener('click', startRecording);
+    */
+    args.ws_uri = Drupal.settings.xlms_kurento.ws_uri;
+    args.file_uri = Drupal.settings.xlms_kurento.file_uri;
 
+    var playButton = document.getElementById('play');
+    playButton.addEventListener('click', startPlaying);
 });
 
+/*
 function startRecording() {
     console.log("onClick");
 
@@ -159,7 +163,7 @@ function startRecording() {
         });
     }
 }
-
+*/
 
 function startPlaying()
 {
@@ -269,8 +273,9 @@ function hideSpinner() {
 
 /**
  * Lightbox utility (to display media pipeline image in a modal dialog)
- */
+ *
 $(document).delegate('*[data-toggle="lightbox"]', 'click', function(event) {
     event.preventDefault();
     $(this).ekkoLightbox();
 });
+ */

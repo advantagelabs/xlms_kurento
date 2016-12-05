@@ -27,10 +27,8 @@ var args = getopts(location.search,
     {
         default:
         {
-            // ws_uri: 'ws://' + location.hostname + ':8888/kurento',
-            ws_uri: Drupal.settings.xlms_kurento.ws_uri,
-            file_uri: Drupal.settings.xlms_kurento.file_uri,
-            // file_uri: 'file:///tmp/recorder_demo.webm', // file to be stored in media server
+            ws_uri: 'ws://' + location.hostname + ':8888/kurento',
+            file_uri: 'file:///tmp/recorder_demo.webm', // file to be stored in media server
             ice_servers: undefined
         }
     });
@@ -57,6 +55,9 @@ function setIceCandidateCallbacks(webRtcPeer, webRtcEp, onerror)
 
 window.addEventListener('load', function(event) {
     console = new Console()
+
+    args = { ws_uri: Drupal.settings.xlms_kurento.ws_uri,
+            file_uri: Drupal.settings.xlms_kurento.file_uri };
 
     var startRecordButton = document.getElementById('start');
     startRecordButton.addEventListener('click', startRecording);

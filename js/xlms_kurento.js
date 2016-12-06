@@ -13,27 +13,11 @@
  *
  */
 
-function getopts(args, opts)
-{
-    var result = opts.default || {};
-    args.replace(
-        new RegExp("([^?=&]+)(=([^&]*))?", "g"),
-        function($0, $1, $2, $3) { result[$1] = decodeURI($3); });
-
-    return result;
-};
-
-var args = getopts(location.search,
-    {
-        default:
-        {
-            // ws_uri: 'ws://' + location.hostname + ':8888/kurento',
-            ws_uri: Drupal.settings.xlms_kurento.ws_uri,
-            file_uri: Drupal.settings.xlms_kurento.file_uri,
-            // file_uri: 'file:///tmp/recorder_demo.webm', // file to be stored in media server
+var args = {
+            ws_uri: 'ws://' + location.hostname + ':8888/kurento',
+            file_uri: 'file:///tmp/recorder_demo.webm', // file to be stored in media server
             ice_servers: undefined
-        }
-    });
+};
 
 function setIceCandidateCallbacks(webRtcPeer, webRtcEp, onerror)
 {
@@ -56,109 +40,17 @@ function setIceCandidateCallbacks(webRtcPeer, webRtcEp, onerror)
 
 
 window.addEventListener('load', function(event) {
-    console = new Console()
 
-    var startRecordButton = document.getElementById('start');
-    startRecordButton.addEventListener('click', startRecording);
-
-});
-
-function startRecording() {
-    console.log("onClick");
-
-    var videoInput = document.getElementById("videoInput");
-    var videoOutput = document.getElementById("videoOutput");
-
-    showSpinner(videoInput, videoOutput);
-
-    var stopRecordButton = document.getElementById("stop")
-
-    var options = {
-        localVideo: videoInput,
-        remoteVideo: videoOutput
-    };
-
-    if (args.ice_servers) {
-        console.log("Use ICE servers: " + args.ice_servers);
-        options.configuration = {
-            iceServers : JSON.parse(args.ice_servers)
-        };
-    } else {
-        console.log("Use freeice")
-    }
-
-    webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendrecv(options, function(error)
-    {
-        if(error) return onError(error)
-
-        this.generateOffer(onOffer)
+    Object.assign(args, {
+        ws_uri: Drupal.settings.xlms_kurento.ws_uri,
+        file_uri: Drupal.settings.xlms_kurento.file_uri,
+        ice_servers: Drupal.settings.xlms_kurento.ice_servers
     });
 
-    function onOffer(error, offer) {
-        if (error) return onError(error);
+    var startPlaybackButton = document.getElementById('start');
+    startPlaybackButton.addEventListener('click', startPlaying);
 
-        console.log("Offer...");
-
-        kurentoClient(args.ws_uri, function(error, client) {
-            if (error) return onError(error);
-
-            client.create('MediaPipeline', function(error, pipeline) {
-                if (error) return onError(error);
-
-                console.log("Got MediaPipeline");
-
-                var elements =
-                    [
-                        {type: 'RecorderEndpoint', params: {uri : args.file_uri}},
-                        {type: 'WebRtcEndpoint', params: {}}
-                    ]
-
-                pipeline.create(elements, function(error, elements){
-                    if (error) return onError(error);
-
-                    var recorder = elements[0]
-                    var webRtc   = elements[1]
-
-                    setIceCandidateCallbacks(webRtcPeer, webRtc, onError)
-
-                    webRtc.processOffer(offer, function(error, answer) {
-                        if (error) return onError(error);
-
-                        console.log("offer");
-
-                        webRtc.gatherCandidates(onError);
-                        webRtcPeer.processAnswer(answer);
-                    });
-
-                    client.connect(webRtc, webRtc, recorder, function(error) {
-                        if (error) return onError(error);
-
-                        console.log("Connected");
-
-                        recorder.record(function(error) {
-                            if (error) return onError(error);
-
-                            console.log("record");
-
-                            stopRecordButton.addEventListener("click", function(event){
-                                recorder.stop();
-                                pipeline.release();
-                                webRtcPeer.dispose();
-                                videoInput.src = "";
-                                videoOutput.src = "";
-
-                                hideSpinner(videoInput, videoOutput);
-
-                                var playButton = document.getElementById('play');
-                                playButton.addEventListener('click', startPlaying);
-                            })
-                        });
-                    });
-                });
-            });
-        });
-    }
-}
+});
 
 
 function startPlaying()
@@ -266,11 +158,3 @@ function hideSpinner() {
         arguments[i].style.background = '';
     }
 }
-
-/**
- * Lightbox utility (to display media pipeline image in a modal dialog)
- */
-$(document).delegate('*[data-toggle="lightbox"]', 'click', function(event) {
-    event.preventDefault();
-    $(this).ekkoLightbox();
-});

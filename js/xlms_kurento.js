@@ -13,25 +13,11 @@
  *
  */
 
-function getopts(args, opts)
-{
-    var result = opts.default || {};
-    args.replace(
-        new RegExp("([^?=&]+)(=([^&]*))?", "g"),
-        function($0, $1, $2, $3) { result[$1] = decodeURI($3); });
-
-    return result;
-};
-
-var args = getopts(location.search,
-    {
-        default:
-        {
+var args = {
             ws_uri: 'ws://' + location.hostname + ':8888/kurento',
             file_uri: 'file:///tmp/recorder_demo.webm', // file to be stored in media server
             ice_servers: undefined
-        }
-    });
+};
 
 function setIceCandidateCallbacks(webRtcPeer, webRtcEp, onerror)
 {
@@ -56,8 +42,10 @@ function setIceCandidateCallbacks(webRtcPeer, webRtcEp, onerror)
 window.addEventListener('load', function(event) {
     console = new Console()
 
-    args = { ws_uri: Drupal.settings.xlms_kurento.ws_uri,
-            file_uri: Drupal.settings.xlms_kurento.file_uri };
+    Object.assign(args, {
+        ws_uri: Drupal.settings.xlms_kurento.ws_uri,
+        file_uri: Drupal.settings.xlms_kurento.file_uri
+    });
 
     var startPlaybackButton = document.getElementById('start');
     startPlaybackButton.addEventListener('click', startPlaying);

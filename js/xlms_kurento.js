@@ -157,11 +157,3 @@ function hideSpinner() {
         arguments[i].style.background = '';
     }
 }
-
-/**
- * Lightbox utility (to display media pipeline image in a modal dialog)
- */
-$(document).delegate('*[data-toggle="lightbox"]', 'click', function(event) {
-    event.preventDefault();
-    $(this).ekkoLightbox();
-});

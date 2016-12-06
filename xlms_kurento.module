@@ -34,15 +34,15 @@ function xlms_kurento_player_block() {
     $part = explode('/', $query[q]); 
     $result_id = $part[3];
     $session = new XlmsSession(NULL, $result_id);
-    dpm($session);
+    // dpm($session);
   }
   else {
     return;
   }
 
   $settings = array(
-    'ws_uri' => 'ws://localhost:8888/kurento',
-    'file_uri' => 'file:///filelocation/' . $session->id . '.webm',
+    'ws_uri' => variable_get('xlms_session_kurento_server', ''),
+    'file_uri' => 'file:///' . variable_get('xlms_session_kurento_video_directory', '') . '/' . $session->id . '.webm',
   );
 
   $content = array();
@@ -54,10 +54,12 @@ function xlms_kurento_player_block() {
     ),
     'js' => array(
       drupal_get_path('module', 'xlms_kurento') . '/js/xlms_kurento.js',
-      // drupal_get_path('module', 'xlms_kurento') . '/js/kurento-client.js',
+      drupal_get_path('module', 'xlms_kurento') . '/js/kurento-client.js',
+      drupal_get_path('module', 'xlms_kurento') . '/js/kurento-utils.js',
+      drupal_get_path('module', 'xlms_kurento') . '/js/adapter.js',
       array('data' => array('xlms_kurento' => $settings), 'type' => 'setting'),
     ),
   );
-  dpm($content);
+  // dpm($content);
   return $content;
 }

@@ -43,7 +43,8 @@ window.addEventListener('load', function(event) {
 
     Object.assign(args, {
         ws_uri: Drupal.settings.xlms_kurento.ws_uri,
-        file_uri: Drupal.settings.xlms_kurento.file_uri
+        file_uri: Drupal.settings.xlms_kurento.file_uri,
+        ice_servers: Drupal.settings.xlms_kurento.ice_servers
     });
 
     var startPlaybackButton = document.getElementById('start');
